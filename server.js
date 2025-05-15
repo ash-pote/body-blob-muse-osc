@@ -43,6 +43,31 @@ app.get("/random-pose", (req, res) => {
   });
 });
 
+// WebSocket Server
+const wss = new WebSocket.Server({ server });
+
+function broadcast(data) {
+  const msg = JSON.stringify(data);
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(msg);
+    }
+  });
+}
+
+// OSC UDP Port (receiving from TouchDesigner)
+const udpPort = new osc.UDPPort({
+  localAddress: "0.0.0.0",
+  localPort: 8000,
+});
+
+udpPort.on("message", function (oscMsg) {
+  console.log("Received OSC:", oscMsg);
+  broadcast(oscMsg); // send to browser via WS
+});
+
+udpPort.open();
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
