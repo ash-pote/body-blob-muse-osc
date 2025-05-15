@@ -5,6 +5,8 @@ import bodyParser from "body-parser";
 import { fileURLToPath } from "url";
 import { dirname as pathDirname } from "path";
 import cors from "cors";
+const WebSocket = require("ws");
+const osc = require("osc");
 
 // Fix __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
